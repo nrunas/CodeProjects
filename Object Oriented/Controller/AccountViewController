@@ -1,0 +1,67 @@
+/**
+ * @author Nicole Runas
+ * @since 11-14-2018
+ * 
+ * This is the controller for the account view
+ */
+package acctMgr.controller;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.math.BigDecimal;
+import acctMgr.model.*;
+import acctMgr.view.*;
+
+public class AccountViewController extends AbstractController 
+{
+	/**
+	 * The constructor for account view controller
+	 * 
+	 * @param index
+	 * @throws FileNotFoundException
+	 */
+	public AccountViewController(int index) throws FileNotFoundException
+	{
+		setModel(AccountList.acctList.get(index));
+		setView(new AccountView((Account)getModel(), this));
+		((JFrameView)getView()).setVisible(true);		
+	}
+	/**
+	 * Takes in an operation to either deposit or withdraw.
+	 * Will crash program if you overdraw too much.
+	 * 
+	 * @param option
+	 * @throws IOException 
+	 */
+	public void operation(String option) throws IOException
+	{
+		if(option == AccountView.DEPOSIT)
+		{
+			BigDecimal amount = ((AccountView)getView()).getAmount();
+			((Account)getModel()).deposit(amount);
+		}
+		
+		else if(option == AccountView.WITHDRAW)
+		{
+				try 
+				{
+					BigDecimal amount = ((AccountView)getView()).getAmount();
+					((Account)getModel()).withdraw(amount);
+				} 
+				catch (OverdrawException e) 
+				{
+					e.printStackTrace();
+				}
+		}
+		else if (option == AccountView.SAVE)
+		{
+			AccountList.save("AccountTestingFile.txt");
+		}
+		else if (option == AccountView.SAVEAEXIT)
+		{
+			AccountList.save("AccountTestingFile.txt");
+			System.exit(0);
+		}
+	}
+	
+}
