@@ -1,0 +1,78 @@
+/**
+ * This is the Account class for homework 2.
+ * It is part for the model package of the acctMgr.
+ * Within it are methods for withdrawing and depositing money into an account.
+ * 
+ * @author Nicole Runas A04790295
+ * @since 2018-17-10
+ */
+package acctMgr.model;
+
+import java.math.BigDecimal;
+
+public class Account extends AbstractModel 
+{
+
+	private BigDecimal balance;
+	private String name;
+	private String id;
+	
+	public Account(String name, String id, BigDecimal balance)
+	{
+		this.name = name;
+		this.id = id;
+		this.balance = balance;
+	}
+	
+	/**
+	 * The method withdraw creates a new BigDecimal to calculate the existing balance
+	 * minus whatever was passed in through amount. It checks for an overdraw exception.
+	 * If there is no exception, it carries out the calculation and returns the new balance.
+	 * 
+	 * @param amount How much is going to be withdrawn
+	 * @throws OverdrawException The custom exception for overdrawing
+	 */
+	public void withdraw (BigDecimal amount) throws OverdrawException
+	{
+		
+		BigDecimal newBalance;
+		newBalance = balance.subtract(amount);
+		if (newBalance.compareTo(BigDecimal.ZERO) < 0)
+		{
+			throw new OverdrawException("Insufficient funds available for withdrawal");
+		}
+		else
+		{
+			balance = balance.subtract(amount);
+			System.out.println("in withdraw - current balance: "+ balance.toString());
+		}
+		//need to do a notify changed
+	}
+	
+	/**
+	 * The method deposit adds whatever amount was passed in to the existing balance and
+	 * returns the calculation.
+	 * 
+	 * @param amount How much is being added
+	 */
+	public void deposit (BigDecimal amount)
+	{
+		balance = balance.add(amount);
+		System.out.println("in deposit - current balance: "+ balance.toString());
+	}
+	
+	public BigDecimal getBalance()
+	{
+		return balance;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+	
+	public String getId()
+	{
+		return id;
+	}
+}
