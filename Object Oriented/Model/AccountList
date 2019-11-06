@@ -1,0 +1,81 @@
+/**
+ * This is the AccountList class for homework 2.
+ * It is part for the model package of the acctMgr.
+ * Within it are methods for adding and removing accounts and 
+ * functions to save the information to a file and load in previous information.
+ * 
+ * @author Nicole Runas A04790295
+ * @since 2018-17-10
+ */
+package acctMgr.model;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class AccountList extends AbstractModel
+{
+	public static  ArrayList<Account> acctList = new ArrayList<Account>();
+	
+	public static void addAcct (Account newAccount)
+	{
+		acctList.add(acctList.size(), newAccount);
+	}
+	
+	public void removeAcct (int idToRemove)
+	{
+		if(!acctList.isEmpty())
+		{
+			acctList.remove(idToRemove);
+		}
+	}
+
+	public static void save(String filename) throws IOException
+	{
+		File file = new File(filename);
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		PrintWriter outFile = new PrintWriter (bw);
+		
+        for(int i = 0; i < acctList.size(); i++)
+        {
+        	outFile.println(acctList.get(i).getName() + ", " + acctList.get(i).getId() 
+        			+ ", " + acctList.get(i).getBalance());
+        }  
+        outFile.close();
+	}
+	
+	public static void load (String filename) throws FileNotFoundException
+	{
+		File file = new File(filename);
+		Scanner src = new Scanner(file);
+		String line = src.nextLine();
+		String [] spLine = line.split(",");
+		
+		Account newAccount = new Account(spLine[0], (String)spLine[1], new BigDecimal(spLine[2]));
+		addAcct(newAccount);
+		
+		while(src.hasNext())
+		{
+			line = src.nextLine();
+			String [] spLine0 = line.split(",");
+			
+			Account newAccount0 = new Account(spLine0[0], (String)spLine0[1], new BigDecimal(spLine0[2]));
+			addAcct(newAccount0);
+		}
+		
+		src.close();
+	}
+	
+	public static int getListSize() 
+	{
+		return acctList.size();
+	}
+
+}
