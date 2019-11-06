@@ -1,0 +1,45 @@
+/**
+ * @author Nicole Runas
+ * @since 11-14-2018
+ * 
+ * This is the controller for the account selection view
+ */
+package acctMgr.controller;
+
+import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
+
+import javax.swing.JComboBox;
+
+import acctMgr.model.*;
+import acctMgr.view.*;
+
+public class AccountSelectionViewController extends AbstractController  
+{
+	/**
+	 * Constructor for the account selection view
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	public AccountSelectionViewController() throws FileNotFoundException
+	{
+		setModel(new AccountList());
+		setView(new AccountSelectionView((Model)getModel(), this));
+		((JFrameView)getView()).setVisible(true);
+	}
+	
+	/**
+	 * The operation method receives the event chosen to open the account view
+	 * 
+	 * @param evt, the event passed by the account selection view
+	 * @throws FileNotFoundException
+	 */
+	public void operation(ActionEvent evt) throws FileNotFoundException
+	{
+		int index = ((JComboBox) evt.getSource()).getSelectedIndex();
+		
+		new AccountView(AccountList.acctList.get(index), new AccountViewController(index));
+			
+		((JFrameView)getView()).setVisible(true);		
+	}
+}
