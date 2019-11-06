@@ -1,0 +1,114 @@
+/**
+ * @author Nicole Runas
+ * @since 11-14-2018
+ * 
+ * This is the view for the account selection view
+ */
+
+package acctMgr.view;
+
+import acctMgr.controller.*; 
+import acctMgr.model.*; 
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.awt.event.ActionEvent;
+
+import javax.swing.*;
+
+public class AccountSelectionView extends JFrameView
+{
+	//private JPanel topPanel;
+	//private JPanel textPanel;
+	private JPanel buttonPanel;
+	private JComboBox menuCombo;
+	//private JLabel acctSelect;
+	
+	private Handler handler = new Handler(); 
+	
+	/**
+	 * This method sets up an array full of the accounts loaded from a file.
+	 * The array will be used to set up the combo box later on.
+	 * 
+	 * @return accounts, a new array of the accounts loaded in
+	 * @throws FileNotFoundException
+	 */
+	public String[] settingUpMenu() throws FileNotFoundException
+	{
+		AccountList.load("testAcctMgr.txt");
+
+		int size = AccountList.acctList.size();
+		String[] accounts = new String[size];
+		for(int i = 0; i < size; i++)
+		{
+			accounts[i] = AccountList.acctList.get(i).getName();
+		}
+		return accounts;
+	}
+	
+	/**
+	 * This is the constructor for account selection view.
+	 * It also adds the combo ox drop down menu, sets the color,
+	 * and adds the action listener.
+	 * 
+	 * @param model
+	 * @param controller
+	 * @throws FileNotFoundException
+	 */
+	public AccountSelectionView(Model model, Controller controller) throws FileNotFoundException 
+	{
+		super(model, controller);
+		this.setSize(300, 100);
+		JPanel ASPanel = new JPanel();
+		JLabel topLabel = new JLabel("Please choose an account from below");
+		
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);	
+		
+		String[] accounts = settingUpMenu();
+		menuCombo = new JComboBox(accounts);
+	    menuCombo.setBackground (Color.pink);
+	    
+	    ASPanel.add(topLabel);
+	    ASPanel.add(menuCombo);
+	    menuCombo.addActionListener(handler);
+	    
+	    this.add(ASPanel);
+	}
+	
+	/**
+	 * The handler class to handle action listeners
+	 *
+	 */
+	private class Handler implements ActionListener {
+		public void actionPerformed(ActionEvent evt) {
+			try 
+			{
+				((AccountSelectionViewController)getController()).operation(evt);
+			} catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	/**
+	 * Notifies that the model has changed
+	 */
+	public void modelChanged(ModelEvent me) 
+	{
+		if(me.getKind() == ModelEvent.EventKind.AgentStatusUpdate) 
+		{
+			System.out.println("Balance field to " + me.getAgStatus());
+		}
+	}
+	/**
+	 * Main method, makes a new instance of account selection view controller
+	 * 
+	 * @param args
+	 * @throws FileNotFoundException
+	 */
+	public static void main(String [] args) throws FileNotFoundException
+	{
+		new AccountSelectionViewController();
+	}
+}
